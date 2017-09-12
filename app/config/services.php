@@ -7,7 +7,9 @@ use Phalcon\Mvc\View\Engine\Volt as VoltEngine;
 use Phalcon\Mvc\Model\Metadata\Memory as MetaDataAdapter;
 use Phalcon\Session\Adapter\Files as SessionAdapter;
 use Phalcon\Flash\Direct as Flash;
-
+use Phalcon\Http\Response\Cookies;
+use Phalcon\Flash\Direct as FlashDirect;
+use Phalcon\Flash\Session as FlashSession;
 /**
  * Shared configuration service
  */
@@ -98,6 +100,7 @@ $di->set('flash', function () {
         'success' => 'alert alert-success',
         'notice'  => 'alert alert-info',
         'warning' => 'alert alert-warning'
+        
     ]);
 });
 
@@ -110,3 +113,28 @@ $di->setShared('session', function () {
 
     return $session;
 });
+
+$di->set(
+    "cookies",
+    function () {
+        $cookies = new Cookies();
+
+        $cookies->useEncryption(false);
+
+        return $cookies;
+    }
+);
+$di->set(
+    'flash',
+    function () {
+        return new FlashDirect();
+    }
+);
+
+// Set up the flash session service
+$di->set(
+    'flashSession',
+    function () {
+        return new FlashSession();
+    }
+);
